@@ -61,7 +61,7 @@ and "e".
 
 Files are incrementally numbered, starting with 0.  Only valid,
 openable files should be included in the count. (is_open comes in
-handy here)
+handy here) 
 
 Your program should absolutely not produce any other output.
 Extraneous output, or output formatted incorrectly (extra spaces etc.)
@@ -81,7 +81,7 @@ Use C++ strings
 
 ```c++
 #include <string>
-```
+``` 
 
 and file streams:
 
