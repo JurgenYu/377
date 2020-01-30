@@ -13,10 +13,13 @@ string build_inverted_index(string filename)
     in.open(filename);
     if (!in.is_open())
     {
+        cerr << "Cannot open source file" << endl;
         return"";
     }
-    if (in.eof())
-    {
+    string s;
+    in >> s;
+    if (s == ""){
+        cerr << "Empty source file" << endl;
         return "";
     }
     int fileNum = 0;
@@ -33,6 +36,7 @@ string build_inverted_index(string filename)
         thisFile.open(nameBuf);
         if (!thisFile.is_open())
         {
+            cerr << "Cannot open files" << endl;
             return"";
         }
         if (thisFile.eof())
