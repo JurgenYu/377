@@ -27,13 +27,13 @@ string build_inverted_index(string filename)
         in >> nameBuf;
         if (nameBuf == "")
         {
-            break;
+            continue;
         }
         ifstream thisFile;
         thisFile.open(nameBuf);
         if (!thisFile.is_open())
         {
-            return"";
+            continue;
         }
         if (thisFile.eof())
         {
