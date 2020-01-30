@@ -14,7 +14,7 @@ string build_inverted_index(string filename)
     if (!in.is_open())
     {
         cerr << "Cannot open source file" << endl;
-        exit(1);
+        return"";
     }
     int fileNum = 0;
     map<string, set<int>> invertedIndex;
@@ -31,7 +31,7 @@ string build_inverted_index(string filename)
         if (!thisFile.is_open())
         {
             cerr << "Cannot open files" << endl;
-            exit(1);
+            return"";
         }
         if (thisFile.eof())
         {
