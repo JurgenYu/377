@@ -25,10 +25,6 @@ string build_inverted_index(string filename)
     {
         string nameBuf;
         in >> nameBuf;
-        if (nameBuf == "")
-        {
-            continue;
-        }
         ifstream thisFile;
         thisFile.open(nameBuf);
         if (!thisFile.is_open())
