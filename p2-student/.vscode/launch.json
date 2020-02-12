@@ -7,25 +7,23 @@
                 "request": "launch",
                 "program": "${workspaceRoot}/tsh",
                 "args": [],
-                "stopAtEntry": true,
+                "stopAtEntry": false,
                 "cwd": "${workspaceRoot}",
                 "environment": [],
                 "externalConsole": false,
-                "MIMode": "lldb",
-                "preLaunchTask": "make"
+                "MIMode": "gdb",
             },
             {
                 "name": "scheduling",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "${workspaceRoot}/scheduling",
+                "program": "${workspaceRoot}/scheduling_tests",
                 "args": ["rr", "workloads/workload_01.txt"],
-                "stopAtEntry": true,
+                "stopAtEntry": false,
                 "cwd": "${workspaceRoot}",
                 "environment": [],
                 "externalConsole": false,
-                "MIMode": "lldb",
-                "preLaunchTask": "make"
+                "MIMode": "gdb",
             }
         ]
     }

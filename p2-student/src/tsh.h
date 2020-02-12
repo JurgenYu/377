@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <limits.h>
+#include <sys/wait.h>
 
 class simple_shell
 {
