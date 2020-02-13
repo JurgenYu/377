@@ -60,12 +60,30 @@ list<Process> fifo(pqueue_arrival workload)
   int time = 0;
   int timeend = 0;
   bool idle = true;
-  while (workload.empty() && arrived.empty() && idle)
+  while (1)
   {
-    if (time == workload.top().arrival)
+    if (idle)
     {
-      arrived.push(workload.top());
-      workload.pop();
+      if (workload.empty() && arrived.empty())
+      {
+        break;
+      }
+    }
+    else if (time == timeend)
+    {
+      idle = true;
+    }
+    while (!workload.empty())
+    {
+      if (time >= workload.top().arrival)
+      {
+        arrived.push(workload.top());
+        workload.pop();
+      }
+      else
+      {
+        break;
+      }
     }
     if (idle && !arrived.empty())
     {
@@ -76,10 +94,6 @@ list<Process> fifo(pqueue_arrival workload)
       newP.first_run = time;
       newP.completion = timeend;
       complete.push_back(newP);
-    }
-    else if (time == timeend)
-    {
-      idle = true;
     }
     ++time;
   }
@@ -93,12 +107,30 @@ list<Process> sjf(pqueue_arrival workload)
   int time = 0;
   int timeend = 0;
   bool idle = true;
-  while (workload.empty() && arrived.empty() && idle)
+  while (1)
   {
-    if (time == workload.top().arrival)
+    if (idle)
     {
-      arrived.push(workload.top());
-      workload.pop();
+      if (workload.empty() && arrived.empty())
+      {
+        break;
+      }
+    }
+    else if (time == timeend)
+    {
+      idle = true;
+    }
+    while (!workload.empty())
+    {
+      if (time >= workload.top().arrival)
+      {
+        arrived.push(workload.top());
+        workload.pop();
+      }
+      else
+      {
+        break;
+      }
     }
     if (idle && !arrived.empty())
     {
@@ -110,10 +142,6 @@ list<Process> sjf(pqueue_arrival workload)
       newP.completion = timeend;
       complete.push_back(newP);
     }
-    else if (time == timeend)
-    {
-      idle = true;
-    }
     ++time;
   }
   return complete;
@@ -124,19 +152,42 @@ list<Process> stcf(pqueue_arrival workload)
   list<Process> complete;
   pqueue_duration arrived;
   Process ongoing;
-  int time = 0;
-  int currDur = 0;
   bool idle = true;
-  while (workload.empty() && arrived.empty() && idle)
+  int time = 0;
+  while (1)
   {
-    if (time == workload.top().arrival)
+    if (idle)
     {
-      arrived.push(workload.top());
-      workload.pop();
+      if (workload.empty() && arrived.empty())
+      {
+        break;
+      }
+    }
+    else
+    {
+      ongoing.duration--;
+      if (ongoing.duration == 0)
+      {
+        ongoing.completion = time;
+        complete.push_back(ongoing);
+        idle = true;
+      }
+    }
+    while (!workload.empty())
+    {
+      if (time >= workload.top().arrival)
+      {
+        arrived.push(workload.top());
+        workload.pop();
+      }
+      else
+      {
+        break;
+      }
     }
     if (!arrived.empty())
     {
-      if (idle || arrived.top().duration < currDur)
+      if (idle || ongoing.duration > arrived.top().duration)
       {
         if (!idle)
         {
@@ -147,19 +198,9 @@ list<Process> stcf(pqueue_arrival workload)
         if (ongoing.first_run == -1)
         {
           ongoing.first_run = time;
-          ongoing.completion = 0 - ongoing.duration;
         }
         idle = false;
       }
-    }
-    else if (ongoing.completion == 0)
-    {
-      ongoing.completion = time;
-      complete.push_back(ongoing);
-      idle = true;
-    }
-    if (!idle){
-      ++ongoing.completion;
     }
     ++time;
   }
@@ -170,35 +211,52 @@ list<Process> rr(pqueue_arrival workload)
 {
   list<Process> complete;
   queue<Process> arrived;
-  int time = 0;
   Process ongoing;
   bool idle = true;
-  while (workload.empty() && arrived.empty() && idle)
+  int time = 0;
+  while (1)
   {
-    if (time == workload.top().arrival)
+    if (idle)
     {
-      arrived.push(workload.top());
-      workload.pop();
+      if (workload.empty() && arrived.empty())
+      {
+        break;
+      }
     }
-    if (idle  && !arrived.empty())
+    while (!workload.empty())
+    {
+      if (time == workload.top().arrival)
+      {
+        arrived.push(workload.top());
+        workload.pop();
+      }
+      else
+      {
+        break;
+      }
+    }
+    if (!arrived.empty())
     {
       ongoing = arrived.front();
+      arrived.pop();
       if (ongoing.first_run == -1)
       {
         ongoing.first_run = time;
-        ongoing.completion = 0-ongoing.duration;
       }
-    }
-    else if (ongoing.completion == 0)
-    {
-      ongoing.completion = time;
-      complete.push_back(ongoing);
-      idle = true;
-    }
-    if (!idle) {
-      ++ongoing.completion;
+      idle = false;
     }
     ++time;
+    ongoing.duration--;
+      if (ongoing.duration == 0)
+      {
+        ongoing.completion = time;
+        complete.push_back(ongoing);
+        idle = true;
+      }
+      else
+      {
+        arrived.push(ongoing);
+      }
   }
   return complete;
 }
@@ -206,16 +264,16 @@ list<Process> rr(pqueue_arrival workload)
 float avg_turnaround(list<Process> processes)
 {
   float t = 0.0;
-  int counter = 0;
+  float counter = 0.0;
   list<Process> output = processes;
   while (!output.empty())
   {
-    Process each = processes.front();
-    processes.pop_front();
-    t += each.completion - each.arrival;
-    ++counter;
+    Process each = output.front();
+    t += (each.completion - each.arrival);
+    counter += 1;
+    output.pop_front();
   }
-  return t/counter;
+  return (float)(t / counter);
 }
 
 float avg_response(list<Process> processes)
@@ -225,19 +283,16 @@ float avg_response(list<Process> processes)
   list<Process> output = processes;
   while (!output.empty())
   {
-    Process each = processes.front();
-    processes.pop_front();
-    t += each.completion - each.first_run;
+    Process each = output.front();
+    output.pop_front();
+    t += (each.first_run - each.arrival);
     ++counter;
   }
-  return t/counter;
+  return (float)(t / counter);
 }
 
 void show_metrics(list<Process> processes)
 {
-  float avg_t = avg_turnaround(processes);
-  float avg_r = avg_response(processes);
-  show_processes(processes);
   cout << '\n';
   cout << "Average Turnaround Time: " << avg_turnaround(processes) << endl;
   cout << "Average Response Time:   " << avg_response(processes) << endl;
