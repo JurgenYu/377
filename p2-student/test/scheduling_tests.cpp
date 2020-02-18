@@ -54,6 +54,14 @@ TEST(SchedulingTest, SchedulingTest4) {
   EXPECT_EQ(x3.duration, 10);  
 }
 
+TEST(SchedulingTest, SchedulingTest5) {
+  pqueue_arrival pq = read_workload("workloads/workload_03.txt");
+  show_workload(pq);
+  list<Process> values = rr(pq);
+  show_processes(values);
+  show_metrics(values);
+}
+
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

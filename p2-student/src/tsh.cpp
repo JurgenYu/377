@@ -5,17 +5,17 @@ using namespace std;
 void simple_shell::parse_command(char *cmd, char **cmdTokens)
 {
   // TODO: tokenize the command string into arguments
-  cmdTokens[0] = strtok(cmd, " ");
+  *cmdTokens = strtok(cmd, " \n");
+  char ** p = cmdTokens;
+  p++;
   for (int i = 1; i < 25; ++i)
   {
-    char *token = strtok(NULL, " ");
-    if (token != NULL)
+    if ((*p = strtok(NULL, " \n")) != NULL)
     {
-      cmdTokens[i] = token;
+      p++;
     }
     else
     {
-      cmdTokens[i] = NULL;
       break;
     }
   }
@@ -25,7 +25,7 @@ void simple_shell::exec_command(char **argv)
 {
   // TODO: fork a child process to execute the command.
   // parent process should wait for the child process to complete and reap it
-  char p[] = "ls";
+  char * p = argv[0];
   if (p[0] == '.' || p[0] == '/' || p[0] == '~')
   {
     if (fork() == 0)
