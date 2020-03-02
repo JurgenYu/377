@@ -25,12 +25,11 @@ void simple_shell::exec_command(char **argv)
 {
   // TODO: fork a child process to execute the command.
   // parent process should wait for the child process to complete and reap it
-  char * p = argv[0];
-  if (p[0] == '.' || p[0] == '/' || p[0] == '~')
+  if (argv[0][0] == '.' || argv[0][0] == '/' || argv[0][0] == '~')
   {
     if (fork() == 0)
     {
-      if (execv(p, argv) == -1)
+      if (execv(argv[0], argv) == -1)
       {
         perror("execl error");
         exit(1);
@@ -45,7 +44,7 @@ void simple_shell::exec_command(char **argv)
   {
     if (fork() == 0)
     {
-      if (execvp(p, argv) == -1)
+      if (execvp(argv[0], argv) == -1)
       {
         cout << argv[0];
         perror("execvp error");
