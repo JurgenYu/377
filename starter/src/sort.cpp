@@ -1,4 +1,5 @@
 #include "sort.h"
+#include <pthread.h>
 
 int run(int argc, char* argv[]){
     if(argc < 2){
@@ -51,7 +52,13 @@ void* sort(void* arg){
     vector<int> right(nums.begin() + half_size, nums.end());
 
     // TODO: Make two threads which call sort() on their respective halves
+    pthread_t pid1;
+    pthread_t pid2;
+    pthread_create(&pid1, NULL, sort, &left);
+    pthread_create(&pid2, NULL, sort, &right);
     // Also join them.
+    pthread_join(pid1, NULL);
+    pthread_join(pid2, NULL);
 
     // Merge:
     int k = 0;
