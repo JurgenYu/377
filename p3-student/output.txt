@@ -1,0 +1,10 @@
+Producer #0, time = 0, producing data item #1, item value=83
+Producer #1, time = 0, producing data item #1, item value=86
+Producer #0, time = 1, producing data item #2, item value=77
+Producer #1, time = 1, producing data item #2, item value=15
+Producer #0, time = 1, producing data item #3, item value=93
+Producer #1, time = 1, producing data item #3, item value=35
+Producer #0, time = 2, producing data item #4, item value=86
+Producer #1, time = 2, producing data item #4, item value=92
+Producer #0, time = 2, producing data item #5, item value=49
+Producer #1, time = 2, producing data item #5, item value=21

@@ -45,6 +45,7 @@ int BoundedBuffer::remove() {
     }
     data = buffer[buffer_first];
     buffer_first = (buffer_first + 1) % buffer_size;
+    --buffer_cnt;
     pthread_cond_signal(&buffer_not_full);
     pthread_mutex_unlock(&buffer_lock);
     return data;
@@ -52,5 +53,5 @@ int BoundedBuffer::remove() {
 
 bool BoundedBuffer::isEmpty() {
     // TODO: check is the buffer is empty
-    return buffer_size == 0;
+    return buffer_cnt == 0;
 }

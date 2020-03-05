@@ -8,9 +8,6 @@
 #include <unistd.h>
 #include <fstream>
 #include <chrono>
-
-#include <iostream>
-
 #include "BoundedBuffer.h"
 
 using namespace std;

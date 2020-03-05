@@ -7,7 +7,7 @@ OBJ_DIR = obj
 
 OBJS = obj/main.o obj/BoundedBuffer.o obj/ProducerConsumer.o
 
-all: prodcon prodcon_tests submission
+all: cleanoutput prodcon prodcon_tests submission
 
 prodcon : $(OBJS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^
@@ -31,3 +31,6 @@ clean:
 	rm -f prodcon prodcon_tests output.txt
 	rm -f *~ *.zip
 	rm -rf obj
+
+cleanoutput:
+	rm -f output.txt

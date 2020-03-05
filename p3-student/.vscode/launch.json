@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/prodcon",
             "args": [
                 "2",
-                "2",
+                "0",
                 "500",
                 "500",
                 "10"

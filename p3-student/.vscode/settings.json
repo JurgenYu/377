@@ -4,6 +4,8 @@
         "array": "cpp",
         "string": "cpp",
         "string_view": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "ostream": "cpp",
+        "iosfwd": "cpp"
     }
 }
