@@ -41,7 +41,7 @@ int BoundedBuffer::remove() {
     int data;
     while (isEmpty())
     {
-        pthread_cond_wait(&buffer_not_empty, NULL);
+        pthread_cond_wait(&buffer_not_empty, &buffer_lock);
     }
     data = buffer[buffer_first];
     buffer_first = (buffer_first + 1) % buffer_size;

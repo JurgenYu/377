@@ -2,25 +2,23 @@
 
 // TODO: add BoundedBuffer, locks and any global variables here
 
-BoundedBuffer buffer;
+BoundedBuffer *buffer;
 int p_cnt = 0;
 int c_cnt = 0;
 int ps;
 int cs;
 auto start = std::chrono::steady_clock::now();
 int item_size;
-pthread_mutex_t p_lock;
-pthread_mutex_t c_lock;
+pthread_mutex_t lock;
 
 void InitProducerConsumer(int p, int c, int psleep, int csleep, int items) {
   // TODO: constructor to initialize variables declared
   // also see instruction for implementation
-  BoundedBuffer buffer(10);
+  buffer = new BoundedBuffer(10);
   ps = psleep;
   cs = csleep;
   item_size = items;
-  pthread_mutex_init(&p_lock, NULL);
-  pthread_mutex_init(&c_lock, NULL);
+  pthread_mutex_init(&lock, NULL);
   pthread_t plist[p];
   pthread_t clist[c];
   for (int i = 0; i < p; i++) {
@@ -47,29 +45,56 @@ void InitProducerConsumer(int p, int c, int psleep, int csleep, int items) {
       perror("Consumer Join Error");
     }
   }
-  pthread_mutex_destroy(&p_lock);
-  pthread_mutex_destroy(&c_lock);
+  pthread_mutex_destroy(&lock);
+  delete buffer;
 }
 
 void *producer(void *threadID) {
   int produced = 0;
   while (1) {
     usleep(ps);
-    pthread_mutex_lock(&p_lock);
-    if (p_cnt == item_size)
-      ;
-    { break; }
-    produced+=1;
+    pthread_mutex_lock(&lock);
+    if (p_cnt == item_size) {
+      break;
+    }
+    produced += 1;
     int data = rand() % 100;
-    buffer.append(data);
+    buffer->append(data);
     ++p_cnt;
-    cout << "Producer #" << threadID << ", ";
-    time = current time, producing data item #j,
-                         item value = foo pthread_mutex_unlock(&p_lock);
+    auto duration = chrono::duration_cast<chrono::seconds>(
+        chrono::steady_clock::now() - start);
+    fstream file;
+    file.open("output.txt");
+    file << "Producer #" << threadID << ", ";
+    file << "time = " << duration.count() << ", ";
+    file << "producing data item #" << produced << ", ";
+    file << "item value=" << data << endl;
+    pthread_mutex_unlock(&lock);
   }
+  return 0;
   // TODO: producer thread, see instruction for implementation
 }
 
 void *consumer(void *threadID) {
+  int consumed = 0;
+  while (1) {
+    usleep(cs);
+    pthread_mutex_lock(&lock);
+    if (c_cnt == item_size) {
+      break;
+    }
+    consumed += 1;
+    int data = buffer->remove();
+    ++c_cnt;
+    auto duration = chrono::duration_cast<chrono::seconds>(
+        chrono::steady_clock::now() - start);
+    fstream file;
+    file.open("output.txt");
+    file << "Consumer #" << threadID << ", ";
+    file << "time = " << duration.count() << ", ";
+    file << "consuming data item with value=" << data << endl;
+    pthread_mutex_unlock(&lock);
+  }
+  return 0;
   // TODO: consumer thread, see instruction for implementation
 }

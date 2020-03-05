@@ -5,11 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "preLaunchTask": "make",
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "enter program name, for example ${workspaceFolder}/a.out",
-            "args": [],
+            "program": "${workspaceFolder}/prodcon",
+            "args": [
+                "2",
+                "2",
+                "500",
+                "500",
+                "10"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
