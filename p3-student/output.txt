@@ -1,10 +1,40 @@
-Producer #0, time = 0, producing data item #1, item value=83
-Producer #1, time = 0, producing data item #1, item value=86
-Producer #0, time = 1, producing data item #2, item value=77
-Producer #1, time = 1, producing data item #2, item value=15
-Producer #0, time = 1, producing data item #3, item value=93
-Producer #1, time = 1, producing data item #3, item value=35
-Producer #0, time = 2, producing data item #4, item value=86
-Producer #1, time = 2, producing data item #4, item value=92
-Producer #0, time = 2, producing data item #5, item value=49
-Producer #1, time = 2, producing data item #5, item value=21
+Producer #0, time = 1, producing data item #1, item value=83
+Consumer #0, time = 1, consuming data item with value=83
+Producer #1, time = 2, producing data item #2, item value=86
+Consumer #1, time = 2, consuming data item with value=86
+Producer #2, time = 3, producing data item #3, item value=77
+Consumer #2, time = 3, consuming data item with value=77
+Producer #3, time = 4, producing data item #4, item value=15
+Consumer #4, time = 4, consuming data item with value=15
+Producer #4, time = 5, producing data item #5, item value=93
+Consumer #4, time = 5, consuming data item with value=93
+Producer #0, time = 6, producing data item #6, item value=35
+Consumer #0, time = 6, consuming data item with value=35
+Producer #1, time = 7, producing data item #7, item value=86
+Consumer #1, time = 7, consuming data item with value=86
+Producer #2, time = 8, producing data item #8, item value=92
+Consumer #2, time = 8, consuming data item with value=92
+Producer #3, time = 9, producing data item #9, item value=49
+Consumer #4, time = 9, consuming data item with value=49
+Producer #4, time = 10, producing data item #10, item value=21
+Consumer #4, time = 10, consuming data item with value=21
+Producer #0, time = 11, producing data item #11, item value=62
+Consumer #0, time = 11, consuming data item with value=62
+Producer #1, time = 12, producing data item #12, item value=27
+Consumer #1, time = 12, consuming data item with value=27
+Producer #2, time = 13, producing data item #13, item value=90
+Consumer #2, time = 13, consuming data item with value=90
+Producer #3, time = 14, producing data item #14, item value=59
+Consumer #4, time = 14, consuming data item with value=59
+Producer #4, time = 15, producing data item #15, item value=63
+Consumer #4, time = 15, consuming data item with value=63
+Producer #0, time = 16, producing data item #16, item value=26
+Consumer #0, time = 16, consuming data item with value=26
+Producer #1, time = 17, producing data item #17, item value=40
+Consumer #1, time = 17, consuming data item with value=40
+Producer #2, time = 18, producing data item #18, item value=26
+Consumer #2, time = 18, consuming data item with value=26
+Producer #3, time = 19, producing data item #19, item value=72
+Consumer #4, time = 19, consuming data item with value=72
+Producer #4, time = 20, producing data item #20, item value=36
+Consumer #4, time = 20, consuming data item with value=36

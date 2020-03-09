@@ -7,8 +7,7 @@ BoundedBuffer::BoundedBuffer(int N) {
     buffer_cnt = 0;
     buffer_first = 0;
     buffer_last = 0;
-    int buffer_array[buffer_size];
-    buffer = buffer_array;
+    buffer = new int[buffer_size];
     pthread_mutex_init(&buffer_lock, NULL);
     pthread_cond_init(&buffer_not_full, NULL);
     pthread_cond_init(&buffer_not_empty, NULL);
@@ -16,6 +15,7 @@ BoundedBuffer::BoundedBuffer(int N) {
 
 BoundedBuffer::~BoundedBuffer() {
     // TODO: destructor to clean up anything necessary
+    delete buffer;
     pthread_mutex_destroy(&buffer_lock);
     pthread_cond_destroy(&buffer_not_empty);
     pthread_cond_destroy(&buffer_not_full);

@@ -1,6 +1,8 @@
 #include "NoLockStack.h"
 
 NoLockStack::NoLockStack(){
+    head.store(nullptr);
+    atomic_init(&count, 0);
     //TODO
 }
 
@@ -19,6 +21,10 @@ NoLockStack::~NoLockStack(){
  *  @param data The int to be stored in the stack.
  */
 void NoLockStack::push(int data){
+    Node * newnode = new Node{data};
+    newnode->next = head;
+    while(!head.compare_exchange_weak(newnode->next, newnode)){};
+    count.exchange(count +1);
     //TODO
 }
 
@@ -30,6 +36,10 @@ void NoLockStack::push(int data){
  */
 bool NoLockStack::pop(int& t){
     //TODO
+    Node* node = head;
+    Node* n = node->next;
+    while (!head.compare_exchange_weak(node->next, n)){};
+    count.exchange(count - 1);
     return true;
 }
 
@@ -39,5 +49,5 @@ bool NoLockStack::pop(int& t){
  */
 int NoLockStack::size(){
     //TODO
-    return 0;
+    return count.load();
 }

@@ -11,11 +11,11 @@
             "request": "launch",
             "program": "${workspaceFolder}/prodcon",
             "args": [
-                "2",
-                "0",
-                "500",
-                "500",
-                "10"
+                "5",
+                "5",
+                "1000",
+                "1000",
+                "20"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

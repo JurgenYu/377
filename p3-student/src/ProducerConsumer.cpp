@@ -3,31 +3,32 @@
 // TODO: add BoundedBuffer, locks and any global variables here
 
 BoundedBuffer *buffer;
-int p_cnt = 0;
-int c_cnt = 0;
+int produced = 0;
+bool done = false;
 int ps;
 int cs;
 auto start = std::chrono::steady_clock::now();
 int item_size;
 int buffer_size;
 ofstream file;
-pthread_mutex_t lock;
-pthread_cond_t notfull;
-pthread_cond_t notempty;
+pthread_mutex_t f_lock;
+pthread_mutex_t p_lock;
+pthread_mutex_t c_lock;
 
 void InitProducerConsumer(int p, int c, int psleep, int csleep, int items) {
   // TODO: constructor to initialize variables declared
   // also see instruction for implementation
-  buffer_size = 10;
+  buffer_size = 1;
   buffer = new BoundedBuffer(buffer_size);
   ps = psleep * 1000;
   cs = csleep * 1000;
   item_size = items;
-  pthread_mutex_init(&lock, NULL);
-  pthread_cond_init(&notfull, NULL);
-  pthread_cond_init(&notempty, NULL);
+  pthread_mutex_init(&f_lock, NULL);
+  pthread_mutex_init(&c_lock, NULL);
+  pthread_mutex_init(&p_lock, NULL);
   pthread_t plist[p];
   pthread_t clist[c];
+  file.open("output.txt");
   for (int i = 0; i < p; i++) {
     int out = pthread_create(&plist[i], NULL, producer, &i);
     if (out) {
@@ -52,69 +53,58 @@ void InitProducerConsumer(int p, int c, int psleep, int csleep, int items) {
       perror("Consumer Join Error");
     }
   }
-  pthread_mutex_destroy(&lock);
-  pthread_cond_destroy(&notfull);
-  pthread_cond_destroy(&notempty);
+  file.close();
+  pthread_mutex_destroy(&f_lock);
+  pthread_mutex_destroy(&p_lock);
+  pthread_mutex_destroy(&c_lock);
   delete buffer;
 }
 
 void *producer(void *threadID) {
   int pid = *(int *)threadID;
-  int produced = 0;
   while (1) {
+    pthread_mutex_lock(&p_lock);
+    if (produced == item_size) {
+      done = true;
+      pthread_mutex_unlock(&p_lock);
+      pthread_exit(NULL);
+    }
     usleep(ps);
-    pthread_mutex_lock(&lock);
-    if (p_cnt == item_size)
-    {
-      pthread_mutex_unlock(&lock);
-      return 0;
-    }
-    while (p_cnt == buffer_size) {
-      pthread_cond_wait(&notfull, &lock);
-    }
+    ++produced;
+    int p_cnt = produced;
+    pthread_mutex_unlock(&p_lock);
     int data = rand() % 100;
     buffer->append(data);
-    produced += 1;
-    ++p_cnt;
     auto duration = chrono::duration_cast<chrono::seconds>(
         chrono::steady_clock::now() - start);
-    file.open("output.txt", ofstream::app);
+    pthread_mutex_lock(&f_lock);
     file << "Producer #" << pid << ", ";
     file << "time = " << duration.count() << ", ";
-    file << "producing data item #" << produced << ", ";
+    file << "producing data item #" << p_cnt << ", ";
     file << "item value=" << data << endl;
-    file.close();
-    pthread_cond_signal(&notempty);
-    pthread_mutex_unlock(&lock);
+    pthread_mutex_unlock(&f_lock);
   }
   // TODO: producer thread, see instruction for implementation
 }
 
 void *consumer(void *threadID) {
   int pid = *(int *)threadID;
-  int consumed = 0;
   while (1) {
+    pthread_mutex_lock(&c_lock);
+    if (buffer->isEmpty() && done) {
+      pthread_mutex_unlock(&c_lock);
+      pthread_exit(NULL);
+    }
     usleep(cs);
-    pthread_mutex_lock(&lock);
-    if (c_cnt == item_size) {
-      pthread_mutex_unlock(&lock);
-      return 0;
-    }
-    while (buffer->isEmpty()) {
-      pthread_cond_wait(&notempty, &lock);
-    }
     int data = buffer->remove();
-    consumed += 1;
-    ++c_cnt;
+    pthread_mutex_unlock(&c_lock);
     auto duration = chrono::duration_cast<chrono::seconds>(
         chrono::steady_clock::now() - start);
-    file.open("output.txt", ofstream::app);
+    pthread_mutex_lock(&f_lock);
     file << "Consumer #" << pid << ", ";
     file << "time = " << duration.count() << ", ";
     file << "consuming data item with value=" << data << endl;
-    file.close();
-    pthread_cond_signal(&notfull);
-    pthread_mutex_unlock(&lock);
+    pthread_mutex_unlock(&f_lock);
   }
   // TODO: consumer thread, see instruction for implementation
 }

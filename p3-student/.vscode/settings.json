@@ -6,6 +6,7 @@
         "string_view": "cpp",
         "chrono": "cpp",
         "ostream": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "type_traits": "cpp"
     }
 }
