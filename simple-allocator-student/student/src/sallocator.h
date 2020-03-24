@@ -31,7 +31,7 @@ class Sallocator {
         bool allocate(int size);
         //Extra Methods
         bool worstAllocate(int size);
-        bool fistAllocate(int size);
+        bool bestAllocate(int size);
         bool nextAllocate(int size);
         bool free(int start, int len);
         void coalesce();

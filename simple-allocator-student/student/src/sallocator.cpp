@@ -25,11 +25,49 @@ bool Sallocator::allocate(int size) {
   return false;
 }
 
-bool Sallocator::worstAllocate(int size){
-    coalesce();
-    
+// Eaxtra Methods
+
+bool Sallocator::worstAllocate(int size) {
+  coalesce();
+  memNode *temp = head;
+  memNode *best = NULL;
+  while (temp != NULL) {
+    if (temp->len >= size) {
+      if (best != NULL || temp->len > best->len) {
+        best = temp;
+      }
+    }
+    temp = temp->next;
+  }
+  if (best == NULL) {
+    return false;
+  } else {
+    best->len -= size;
+    best->addr += size;
+    return true;
+  }
 }
-bool fistAllocate(int size);
+
+bool bestAllocate(int size) {
+  coalesce();
+  memNode *temp = head;
+  memNode *best = NULL;
+  while (temp != NULL) {
+    if (temp->len >= size) {
+      if (best != NULL || temp->len > best->len) {
+        best = temp;
+      }
+    }
+    temp = temp->next;
+  }
+  if (best == NULL) {
+    return false;
+  } else {
+    best->len -= size;
+    best->addr += size;
+    return true;
+  }
+}
 bool nextAllocate(int size);
 
 bool Sallocator::free(int start, int len) {
