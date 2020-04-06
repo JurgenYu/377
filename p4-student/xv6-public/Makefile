@@ -182,6 +182,8 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_clonetest\
+	_jointest\
+	_locktest\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -255,6 +257,8 @@ EXTRA=\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 	clonetest.c\
+	jointest.c\
+	locktest.c\
 
 dist:
 	rm -rf dist

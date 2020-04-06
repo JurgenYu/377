@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "ticketlock.h"
 
 struct {
   struct spinlock lock;
@@ -595,4 +596,80 @@ int clone(void(*fcn)(void*), void *arg, void *stack) {
   release(&ptable.lock);
 
   return np->pid;
+}
+
+int join(void) {
+  struct proc *p;
+  int havethreads, pid;
+  struct proc *curproc = myproc();
+
+  acquire(&ptable.lock);
+  for(;;){
+    // Scan through table looking for exited children.
+    havethreads = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(!(p->pgdir == curproc->pgdir)) {
+        continue;
+      }
+      if(p->parent != curproc)
+        continue;
+      havethreads = 1;
+      if(p->state == ZOMBIE){
+        // Found one.
+        pid = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        p->state = UNUSED;
+        release(&ptable.lock);
+        return pid;
+      }
+    }
+
+    // No point waiting if we don't have any children.
+    if(!havethreads || curproc->killed){
+      release(&ptable.lock);
+      return -1;
+    }
+
+    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+    sleep(curproc, &ptable.lock);  //DOC: wait-sleep
+  }
+}
+
+// return whether the given ticketlock is held by this process.
+int holding_t(struct ticketlock *lk)
+{
+  return lk->proc == myproc() && lk->ticket != lk->turn;
+}
+
+void initlock_t(struct ticketlock *lk)
+{
+  lk->ticket = 0;
+  lk->turn = 0;
+  lk->proc = 0;
+}
+
+void acquire_t(struct ticketlock *lk)
+{
+  if (holding_t(lk))
+  {
+    panic("lock already acquired1");
+  }
+  uint currticket = fetch_and_add(&lk->ticket, 1);
+  while (lk->turn != currticket);
+  lk->proc = myproc();
+}
+
+void release_t(struct ticketlock *lk)
+{
+  if (!holding_t(lk))
+  {
+    panic("lock already acquired2");
+  }
+  lk->proc = 0;
+  ++lk->turn;
 }

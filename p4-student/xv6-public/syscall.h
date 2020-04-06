@@ -21,3 +21,7 @@
 #define SYS_mkdir  20
 #define SYS_close  21
 #define SYS_clone  22 //newlly added method
+#define SYS_join   23
+#define SYS_initlock_t 24
+#define SYS_acquire_t 25
+#define SYS_release_t 26

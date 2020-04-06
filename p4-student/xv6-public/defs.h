@@ -9,6 +9,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct ticketlock;
 
 // bio.c
 void            binit(void);
@@ -121,6 +122,10 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 int             clone(void(*fcn)(void*), void *, void *);
+int             join(void);
+void            initlock_t(struct ticketlock*);
+void            acquire_t(struct ticketlock*);
+void            release_t(struct ticketlock*);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

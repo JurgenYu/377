@@ -103,3 +103,43 @@ sys_clone()
 	  return -1;
   return clone(fcn, arg, stack);
 }
+
+int sys_join(void) {
+  return join();
+}
+
+int sys_initlock_t(void)
+{
+  struct ticketlock *tl;
+  if (argptr(0, (char**)&tl, sizeof(struct ticketlock*)) < 0)
+  {
+    return -1;
+  }
+
+  initlock_t(tl);
+  return 0;
+}
+
+int sys_acquire_t(void)
+{
+  struct ticketlock *tl;
+  if (argptr(0, (char**)&tl, sizeof(struct ticketlock*)) < 0)
+  {
+    return -1;
+  }
+
+  acquire_t(tl);
+  return 0;
+}
+
+int sys_release_t(void)
+{
+  struct ticketlock *tl;
+  if (argptr(0, (char**)&tl, sizeof(struct ticketlock*)) < 0)
+  {
+    return -1;
+  }
+
+  release_t(tl);
+  return 0;
+}
