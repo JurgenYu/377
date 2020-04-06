@@ -62,7 +62,7 @@ previous projects. Here is the command you need to run to get Docker
 going:
 
 ```
-docker run --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --privileged -it -v /absolute/path/to/here:/mnt/files mcorner/os377 bash
+docker run --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --privileged -it -v D:\JurgenYu\OneDrive\Documents\377\p4-student:/mnt/files mcorner/os377 bash
 ```
 
 Make sure you get the path correct! You need to replace
