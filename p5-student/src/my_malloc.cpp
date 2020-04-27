@@ -81,6 +81,17 @@ void print_free_list() {
 //
 void find_free(size_t size, node_t **found, node_t **previous) {
   // TODO
+  node_t *p = heap();
+  node_t *prev = NULL;
+  while (p != NULL) {
+    if (p->size >= size + sizeof(header_t) + sizeof(node_t)) {
+      *found = p;
+      *previous = prev;
+      break;
+    }
+    prev = p;
+    p = p->next;
+  }
 }
 
 // Splits a found free node to accommodate an allocation request.
@@ -102,6 +113,17 @@ void split(size_t size, node_t **previous, node_t **free_block,
            header_t **allocated) {
   assert(*free_block != NULL);
   // TODO
+  node_t *original = *free_block;
+  size_t actual_size = size + sizeof(header_t);
+  (*free_block) = (node_t *)(((char *)*free_block) + actual_size);
+  (*free_block)->size = original->size - size - sizeof(header_t);
+  if (*previous == NULL)
+    head = (*free_block);
+  else
+    (*previous)->next = (*free_block);
+  *allocated = reinterpret_cast<header_t *>(original);
+  (*allocated)->size = size;
+  (*allocated)->magic = MAGIC;
 }
 
 // Returns a pointer to a region of memory having at least the request `size`
@@ -115,7 +137,15 @@ void split(size_t size, node_t **previous, node_t **free_block,
 //
 void *my_malloc(size_t size) {
   // TODO
-  return NULL;
+  node_t *found = NULL;
+  node_t *previous = NULL;
+  header_t *allocated = NULL;
+  find_free(size, &found, &previous);
+  if (found == NULL)
+    return NULL;
+  split(size, &previous, &found, &allocated);
+  void *p = (((char *)allocated) + sizeof(header_t));
+  return p;
 }
 
 // Merges adjacent nodes on the free list to reduce external fragmentation.
@@ -128,6 +158,17 @@ void *my_malloc(size_t size) {
 //
 void coalesce(node_t *free_block) {
   // TODO
+  node_t *p = free_block;
+  while (p != NULL && p->next != NULL) {
+    node_t *curr_address = p;
+    node_t *next_address = p->next;
+    size_t block_size = p->size + sizeof(node_t);
+    if (((char *)curr_address) + block_size == (char *)next_address) {
+      curr_address->size += (next_address->size + sizeof(node_t));
+      curr_address->next = next_address->next;
+    }
+    p = p->next;
+  }
 }
 
 // Frees a given region of memory back to the free list.
@@ -137,4 +178,11 @@ void coalesce(node_t *free_block) {
 //
 void my_free(void *allocated) {
   // TODO
+  header_t *p = (header_t *)(((char *)allocated) - sizeof(header_t));
+  assert(p->magic == MAGIC);
+  node_t *n = reinterpret_cast<node_t *>(p);
+  n->size = p->size + sizeof(header_t) - sizeof(node_t);
+  n->next = head;
+  head = n;
+  coalesce(head);
 }
